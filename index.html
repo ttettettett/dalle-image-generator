@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+       <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dall-E Generator</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <!-- jQuery and Bootstrap JavaScript -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" crossorigin="anonymous"></script>
+
+    <script>
+        async function generateImage() {
+            const prompt = document.getElementById("prompt").value;
+            const apiKey = document.getElementById("api-key").value;
+
+            const response = await fetch("https://api.openai.com/v1/images/generations", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${apiKey}`,
+                },
+                body: JSON.stringify({
+                    "prompt": prompt,
+                    "n": 1,
+                    "size": "1024x1024"
+                }),
+            });
+
+            const data = await response.json();
+            const img = document.getElementById("generated-image");
+            img.src = data.data[0].url;
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center my-5">Dall-E Image Generator</h1>
+        <form onsubmit="event.preventDefault(); generateImage();">
+            <div class="form-group">
+                <label for="api-key">Enter your API key:</label>
+                <input type="password" id="api-key" name="api-key" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="prompt">Enter a prompt:</label>
+                <input type="text" id="prompt" name="prompt" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Generate Image</button>
+        </form>
+        <div class="mt-5">
+            <img id="generated-image" src="" alt="Generated image" class="img-fluid">
+        </div>
+    </div>
+</body>
+</html>
